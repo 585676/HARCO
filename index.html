@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HARCO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'ABCHelveestiSpikesVariableEdu';
+            src: url('ABCHelveestiSpikesVariableEdu.woff') format('woff');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'ABCHelveestiSpikesVariableEdu', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blob {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 650px;
+            height: 650px;
+            border-radius: 100%;
+            background-image: linear-gradient(#676767 10%, #ffd9fd);
+            filter: blur(250px);
+            transition: all 450ms ease-out;
+            position: fixed;
+            pointer-events: none;
+            left: 0;
+            top: 0;
+            transform: translate(calc(-50% + 15px), -50%);
+            z-index: -1;
+        }
+
+        .address {
+            position: absolute;
+            bottom: 10px;
+            font-size: 16px;
+            font-weight: 400;
+            color: rgb(40, 40, 40);
+            line-height: 1;
+            text-align: center;
+            transition: font-weight 0.1s, color 0.1s;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .address:hover {
+            font-weight: 550;
+        }
+
+        .button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 25px;
+            font-weight: 400;
+            color: rgb(40, 40, 40);
+            text-align: center;
+            line-height: 0.75;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            padding-bottom: 5px;
+            transition: font-weight 0.1s, opacity 0.1s, color 0.1s;
+            white-space: nowrap;
+            z-index: 1;
+        }
+
+        .button:hover {
+            font-weight: 550;
+        }
+
+        .button span {
+            display: inline-block;
+            transition: opacity 0.5s;
+        }
+
+        .header-image {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            width: 190px;
+            height: auto;
+            transform: translateX(-50%);
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .header-image img {
+            width: 100%;
+            height: 100%;
+            transition: opacity 0.5s ease-in-out; /* Weicher Übergang */
+        }
+
+        /* Regel für Telefonnummer */
+        a[href^="tel"] {
+            color: inherit; /* Erbt die Farbe der Adresse */
+            text-decoration: none; /* Entfernt die Unterstreichung */
+        }
+
+        .vibrate {
+            animation: vibrate 0.001s linear infinite;
+        }
+
+        @keyframes vibrate {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(calc(-1px + var(--vibrate-offset-x)), calc(-10px + var(--vibrate-offset-y))); }
+            50% { transform: translate(calc(-10px + var(--vibrate-offset-x)), calc(1px + var(--vibrate-offset-y))); }
+            75% { transform: translate(calc(1px + var(--vibrate-offset-x)), calc(10px + var(--vibrate-offset-y))); }
+            100% { transform: translate(calc(-20px + var(--vibrate-offset-x)), calc(-1px + var(--vibrate-offset-y))); }
+        }
+
+        .center-image {
+            position: absolute;
+            top: 49.7%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            opacity: 1; /* Initial sichtbar */
+            transition: opacity 0.5s; /* Weicher Übergang */
+        }
+
+        .blink {
+            animation: blink 1.5s linear infinite; /* Gleicher Rhythmus wie der Button */
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="blob"></div>
+
+    <div class="header-image" id="headerImageContainer">
+        <img src="/Users/mirojakob/Desktop/HARCO/HARCO.1.1.png" alt="Harco Logo" id="headerImage">
+    </div>
+
+    <div class="address" id="address">
+        MARCO ENGLER DIAZ<br>
+        GERBERNGASSE12<br>
+        CH&nbsp;3011&nbsp;BERN<br>
+        <a href="tel:+41782185222">+41&nbsp;78&nbsp;21&nbsp;85&nbsp;222</a>
+    </div>
+
+    <a href="https://www.fresha.com/de/a/harco-bern-gerberngasse-12-v2xs7kv5?pId=1302627" class="button" id="buttonText">
+        <span id="textSpan">TERMIN BUCHEN</span>
+    </a>
+
+    <img src="/Users/mirojakob/Desktop/HARCO/pfeile.png" alt="Pfeile" class="center-image" id="centerImage">
+
+    <audio id="clickSound" src="/Users/mirojakob/Desktop/HARCO/machine.mp3" preload="auto"></audio>
+
+    <script>
+        const languages = [
+            'TERMIN BUCHEN',
+            'HACER UNA CITA',
+            'BOOK APPOINTMENT',
+        ];
+        let currentLanguageIndex = 0;
+        let textChangingInterval;
+
+        function changeLanguage() {
+            const buttonText = document.getElementById('textSpan');
+            buttonText.style.opacity = '0';
+            setTimeout(() => {
+                currentLanguageIndex = (currentLanguageIndex + 1) % languages.length;
+                buttonText.textContent = languages[currentLanguageIndex];
+                buttonText.style.opacity = '1';
+            }, 300);
+        }
+
+        function startTextChange() {
+            textChangingInterval = setInterval(changeLanguage, 1500);
+        }
+
+        function stopTextChange() {
+            clearInterval(textChangingInterval);
+        }
+
+        document.querySelector('.button').addEventListener('mouseover', () => {
+            stopTextChange();
+            document.getElementById('centerImage').classList.add('blink');
+        });
+
+        document.querySelector('.button').addEventListener('mouseout', () => {
+            startTextChange();
+            document.getElementById('centerImage').classList.remove('blink');
+        });
+
+        startTextChange();
+
+// Variable to track the toggle state
+let isAlternate = false;
+
+
+
+
+        // Function to trigger the vibration effect
+        function triggerVibration() {
+            const elements = document.querySelectorAll('body, .header-image, .address, .button'); // Alle relevanten Elemente
+            const randomOffsetX = Math.random() * 10 - 5; // Zufällige Werte zwischen -5 und 5
+            const randomOffsetY = Math.random() * 10 - 5; // Zufällige Werte zwischen -5 und 5
+
+            elements.forEach(el => {
+                el.style.setProperty('--vibrate-offset-x', `${randomOffsetX}px`);
+                el.style.setProperty('--vibrate-offset-y', `${randomOffsetY}px`);
+                el.classList.add('vibrate');
+            });
+
+            setTimeout(() => {
+                elements.forEach(el => el.classList.remove('vibrate'));
+            }, 1000); // Dauer der Vibration
+        }
+
+        // Play sound when clicking on the image
+        document.getElementById('headerImage').addEventListener('click', () => {
+            // Play audio
+            const clickSound = document.getElementById('clickSound');
+            clickSound.play();
+            
+            // Trigger vibration
+            triggerVibration();
+        });
+
+        // Hover effect to change the images after 0.1s delay
+        const headerImage = document.getElementById('headerImage');
+        const headerImageContainer = document.getElementById('headerImageContainer');
+
+        headerImageContainer.addEventListener('mouseover', () => {
+            headerImage.style.opacity = '0';  // Fade out
+            setTimeout(() => {
+                if (isAlternate) {
+                    headerImage.src = '/Users/mirojakob/Desktop/HARCO/HARCO.2.2.png';
+                } else {
+                    headerImage.src = '/Users/mirojakob/Desktop/HARCO/HARCO.1.2.png';
+                }
+                headerImage.style.opacity = '1';  // Fade in
+            }, 100);  // 0.1 second delay
+        });
+
+        headerImageContainer.addEventListener('mouseout', () => {
+            headerImage.style.opacity = '0';  // Fade out
+            setTimeout(() => {
+                if (isAlternate) {
+                    headerImage.src = '/Users/mirojakob/Desktop/HARCO/HARCO.2.1.png';
+                } else {
+                    headerImage.src = '/Users/mirojakob/Desktop/HARCO/HARCO.1.1.png';
+                }
+                headerImage.style.opacity = '1';  // Fade in
+            }, 100);  // 0.1 second delay to revert
+        });
+
+        var blob = document.querySelector('.blob');
+
+        document.addEventListener('mousemove', function(e){
+            var x = e.clientX;
+            var y = e.clientY;
+            blob.style.transform = `translate3d(calc(${e.clientX}px - 50%), calc(${e.clientY}px - 50%), 0)`;
+        });
+    </script>
+</body>
+</html>
